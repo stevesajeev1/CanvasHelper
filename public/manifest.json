@@ -8,9 +8,12 @@
     "default_title": "Canvas Helper"
   },
   "icons": {
-    "16": "logo-16.png",
-    "24": "logo-24.png",
-    "32": "logo-32.png",
-    "64": "logo-64.png"
-  }
+    "16": "assets/logo-16.png",
+    "24": "assets/logo-24.png",
+    "32": "assets/logo-32.png",
+    "64": "assets/logo-64.png"
+  },
+  "permissions": [
+    "storage"
+  ]
 }

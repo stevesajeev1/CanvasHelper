@@ -2,6 +2,20 @@
   text-align: center;
 }
 
+.settings {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 30px;
+  width: 30px;
+  cursor: pointer;
+  transition: all .5s ease-in-out;
+}
+
+.settings:hover {
+  transform: rotate(45deg);
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;

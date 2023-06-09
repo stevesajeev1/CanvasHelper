@@ -25,7 +25,7 @@ function Settings({ showApp, access_token, canvas_url }: { showApp: () => void, 
       accessTokenInput.reportValidity();
       return;
     }
-    if (!/(\.instructure\.com)$/.test(canvasURLInput.value)) { // Validate canvas URL
+    if (!/^[a-zA-Z0-9\.]+$/.test(canvasURLInput.value)) { // Validate canvas URL
       canvasURLInput.setCustomValidity("Enter a valid canvas URL!");
       canvasURLInput.reportValidity();
       return;

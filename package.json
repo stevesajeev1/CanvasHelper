@@ -19,8 +19,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "craco start",
-    "build": "craco build"
+    "dev": "craco start",
+    "build": "cross-env NODE_ENV=production craco build"
   },
   "eslintConfig": {
     "extends": [

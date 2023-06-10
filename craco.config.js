@@ -26,5 +26,13 @@ module.exports = {
 
             return webpackConfig;
         },
+        devServer: {
+            devMiddleware: {
+                writeToDisk: true,
+            },
+        },
+        output: {
+            path: path.join(__dirname, "build"),
+        }
     },
 };

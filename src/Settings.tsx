@@ -63,7 +63,7 @@ function Settings({ showApp, access_token, canvas_url }: { showApp: () => void, 
                     placeholder="scps.instructure.com"
                 />
             </div>
-            <div className="save" onClick={handleSave}>Save</div>
+            <button className="save" onClick={handleSave}>Save</button>
         </div>
     );
 }

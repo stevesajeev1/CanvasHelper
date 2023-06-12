@@ -1,5 +1,6 @@
 .Clock {
     font-family: 'Roboto', sans-serif;
+    background-color: var(--bg-lighter);
     color: var(--white);
     border-bottom: 3px solid var(--blue-darker);
     padding: 5px;

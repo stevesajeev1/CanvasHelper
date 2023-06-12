@@ -11,6 +11,7 @@
     "@types/node": "^16.18.34",
     "@types/react": "^18.2.9",
     "@types/react-dom": "^18.2.4",
+    "cross-env": "^7.0.3",
     "eslint-config-react-app": "^7.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -20,8 +21,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "dev": "craco start",
-    "build": "cross-env NODE_ENV=production craco build"
+    "dev": "cross-env NODE_ENV=development craco start",
+    "build": "craco build"
   },
   "eslintConfig": {
     "extends": [
@@ -42,7 +43,6 @@
     ]
   },
   "devDependencies": {
-    "@types/chrome": "^0.0.237",
-    "cross-env": "^7.0.3"
+    "@types/chrome": "^0.0.237"
   }
 }

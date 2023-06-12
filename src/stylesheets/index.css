@@ -1,4 +1,4 @@
-body {
+body, #root {
   /* Set extension panel's width and height */
   width: 600px;
   height: 450px;

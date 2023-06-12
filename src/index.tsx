@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './stylesheets/index.css';
+import './stylesheets/shared.css';
 import App from './App';
 import Settings from './Settings'
 

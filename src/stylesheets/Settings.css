@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #282c34;
+    background-color: var(--bg);
     font-family: 'Roboto', sans-serif; 
     height: 100%;
     color: white;
@@ -25,13 +25,13 @@
 
 .help {
     width: 80%;
-    background-color: #F0F2EF;
+    background-color: var(--white);
     color: black;
     margin-bottom: 10px;
 }
 
 .url {
-    color: blue;
+    color: var(--blue);
 }
 
 .helpSteps {
@@ -58,7 +58,7 @@
 .inputContainer > input {
     height: 20px;
     font-weight: bold;
-    background-color: #F0F2EF;
+    background-color: var(--white);
 }
 
 .inputContainer > input::placeholder {
@@ -71,7 +71,7 @@
 }
 
 .inputContainer > input:hover {
-    box-shadow: rgb(84, 84, 94) 0px 7px 29px 0px;
+    box-shadow: var(--blue-darker) 0px 7px 29px 0px;
 }
 
 .save {
@@ -80,11 +80,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #F0F2EF;
+    background-color: var(--white);
     color: black;
 }
 
 .save:hover {
     cursor: pointer;
-    box-shadow: rgb(84, 84, 94) 0px 7px 29px 0px;
+    box-shadow: var(--blue-darker) 0px 7px 29px 0px;
 }

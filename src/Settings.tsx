@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './stylesheets/shared.css';
 import './stylesheets/Settings.css';
 
 function Settings({ showApp, access_token, canvas_url }: { showApp: () => void, access_token: string, canvas_url: string}) {

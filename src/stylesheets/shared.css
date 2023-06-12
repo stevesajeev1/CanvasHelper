@@ -1,0 +1,15 @@
+:root {
+    --bg: #0d1b2a;
+    --bg-lighter: #1b263b;
+    --blue-darker: #415a77;
+    --blue-lighter: #778da9;
+    --blue: #008ac4;
+    --white: #e0e1dd;
+}
+
+body, #root {
+    /* Set extension panel's width and height */
+    width: 600px;
+    height: 450px;
+    margin: 0;
+}

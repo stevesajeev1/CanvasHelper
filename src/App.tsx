@@ -4,13 +4,13 @@ import Clock from './Clock'
 import './stylesheets/shared.css';
 import './stylesheets/App.css';
 
-function App({ showSettings }: { showSettings: (access_token: string, canvas_url: string) => void}) {
+function App() {
   	return (
   	  	<div className="App">
 			<div className="container">
 				<Clock />
 			</div>
-  	  	  	<Navigation showSettings={showSettings} />
+  	  	  	<Navigation />
   	  	</div>
   	);
 }

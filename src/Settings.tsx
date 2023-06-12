@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { showApp } from './index'
 import './stylesheets/shared.css';
 import './stylesheets/Settings.css';
 
-function Settings({ showApp, access_token, canvas_url }: { showApp: () => void, access_token: string, canvas_url: string}) {
+function Settings({ access_token, canvas_url }: { access_token: string, canvas_url: string}) {
     // State for showing/hiding help div
     const [help, setHelp] = useState(false);
 

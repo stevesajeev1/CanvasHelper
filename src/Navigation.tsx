@@ -1,10 +1,12 @@
 import React from 'react';
+import { showSettings } from './index'
 import settings from './assets/settings.svg';
 import calendar from './assets/calendar.svg';
+import notification from './assets/notification.svg'
 import './stylesheets/shared.css';
 import './stylesheets/Navigation.css';
 
-function Navigation({ showSettings }: { showSettings: (access_token: string, canvas_url: string) => void}) {
+function Navigation() {
     const handleSettings = () => {
     	// Get existing settings
     	chrome.storage.sync.get(['access_token', 'canvas_url'], (items) => {
@@ -15,7 +17,8 @@ function Navigation({ showSettings }: { showSettings: (access_token: string, can
     return (
         <div className="navPanel">
 			<img src={settings} className="settings" onClick={handleSettings} alt="settings" />
-			<img src={calendar} className="calendar" alt="calendar"></img>
+			<img src={calendar} alt="calendar"></img>
+			<img src={notification} alt="notification"></img>
 		</div>
     );
 

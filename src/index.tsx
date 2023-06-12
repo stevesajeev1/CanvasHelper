@@ -37,18 +37,18 @@ const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );
 
-const showApp = () => {
+export const showApp = () => {
   	root.render(
     	<React.StrictMode>
-      		<App showSettings={showSettings}/>
+      		<App />
     	</React.StrictMode>
   	);
 }
 
-const showSettings = (access_token: string, canvas_url: string) => {
+export const showSettings = (access_token: string, canvas_url: string) => {
   	root.render(
   	  	<React.StrictMode>
-  	    	<Settings showApp={showApp} access_token={access_token} canvas_url={canvas_url}/>
+  	    	<Settings access_token={access_token} canvas_url={canvas_url}/>
   	  	</React.StrictMode>
   	);
 }

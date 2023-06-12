@@ -28,3 +28,25 @@
 .settings:hover {
     transform: rotate(45deg);
 }
+
+.notification:hover {
+    animation: shake 0.8s ease both;
+}
+
+@keyframes shake {
+    10%, 90% {
+        transform: translateX(-1px);
+    }
+
+    20%, 80% {
+        transform: translateX(2px);
+    }
+
+    30%, 50%, 70% {
+        transform: translateX(-2.5px);
+    }
+
+    40%, 60% {
+        transform: translateX(2.5px);
+    }
+}

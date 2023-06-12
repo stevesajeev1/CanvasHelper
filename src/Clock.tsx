@@ -17,8 +17,20 @@ function Clock() {
 		return cleanup;
 	});
 
+	const day = () => {
+		const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+		return date.toLocaleDateString("en-US", options);
+	}
+
+	const time = () => {
+		return date.toLocaleTimeString();
+	}
+
     return (
-        <div className="time">{date.toLocaleString().replace(',','')}</div>
+        <div className="Clock">
+			<div className="day">{day()}</div>
+			<div className="time">{time()}</div>
+		</div>
     );
 }
 

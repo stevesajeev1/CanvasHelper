@@ -18,7 +18,7 @@ function Navigation() {
         <div className="navPanel">
 			<img src={settings} className="settings" onClick={handleSettings} alt="settings" />
 			<img src={calendar} alt="calendar"></img>
-			<img src={notification} alt="notification"></img>
+			<img src={notification} className="notification" alt="notification"></img>
 		</div>
     );
 

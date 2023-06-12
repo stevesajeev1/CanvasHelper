@@ -1,5 +1,12 @@
-.time {
+.Clock {
     font-family: 'Roboto', sans-serif;
     color: var(--white);
+    border-bottom: 3px solid var(--blue-darker);
+    padding: 5px;
+}
+.day {
     font-size: 25px;
+}
+.time {
+    font-size: 16px;
 }

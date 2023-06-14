@@ -1,4 +1,3 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './stylesheets/shared.css';
 import App from './App';
@@ -39,25 +38,21 @@ const root = ReactDOM.createRoot(
 
 export const showApp = () => {
   	root.render(
-    	<React.StrictMode>
-      		<App />
-    	</React.StrictMode>
+    	<App />
   	);
 }
 
-export const showSettings = (access_token: string, canvas_url: string) => {
+export const showSettings = () => {
   	root.render(
-  	  	<React.StrictMode>
-  	    	<Settings access_token={access_token} canvas_url={canvas_url}/>
-  	  	</React.StrictMode>
+		<Settings />
   	);
 }
 
 // Get existing settings, if it exists
-chrome.storage.sync.get(['access_token', 'canvas_url'], (items) => {
-  	if (items['access_token'] && items['canvas_url']) {
+chrome.storage.sync.get('accounts', items => {
+  	if (items['accounts']) {
   	  	showApp();
   	} else {
-  	  	showSettings('', '');
+  	  	showSettings();
   	}
 });

@@ -30,6 +30,17 @@
     margin-bottom: 10px;
 }
 
+.accounts {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    row-gap: 5px;
+    max-height: 190px;
+    overflow-y: auto;
+    margin-bottom: 16px;
+}
+
 .url {
     color: var(--blue);
 }

@@ -154,6 +154,7 @@ function Settings() {
                     type="text"
                     id="accessToken"
                     placeholder="1234~abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ab"
+                    autoComplete="off"
                 />
             </div>
             <div className="inputContainer">
@@ -162,6 +163,7 @@ function Settings() {
                     type="text"
                     id="canvasURL"
                     placeholder="scps.instructure.com"
+                    autoComplete="off"
                 />
             </div>
             <button className="save" onClick={handleSave}>Save</button>

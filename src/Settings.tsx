@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { showApp } from './index'
 import './stylesheets/shared.css';
 import './stylesheets/Settings.css';
@@ -8,44 +8,60 @@ function Settings() {
     // State for showing/hiding help div
     const [help, setHelp] = useState(false);
 
-    // Used for triggering redraw
-    const [_state, setState] = useState('default');
+    // State for accounts in system
+    const [accounts, setAccounts] = useState<JSX.Element[]>([]);
 
-    // Create existing account elements
-    const currentAccounts: JSX.Element[] = [];
-    chrome.storage.sync.get(['accounts'], items => {
-        if (!items['accounts']) {
-            return;
+    useEffect(() => {
+        const deleteAccount = (newAccounts: {[key: string]: string}[]) => {
+            const accountsCopy: JSX.Element[] = [];
+            for (let i = 0; i < newAccounts.length; i++) {
+                const account = newAccounts[i];
+                accountsCopy.push(<Account key={i} access_token={account['access_token']} canvas_url={account['canvas_url']} index={i} handleDelete={deleteAccount}></Account>);
+            }
+            setAccounts(accountsCopy);
         }
-        for (let i = 0; i < items['accounts'].length; i++) {
-            const account = items['accounts'][i];
-            currentAccounts.push(<Account key={i} access_token={account['access_token']} canvas_url={account['canvas_url']} index={i} stateChanger={setState}></Account>);
-        }
-    });
+
+        // Create existing account elements
+        chrome.storage.sync.get(['accounts'], items => {
+            if (!items['accounts']) {
+                return;
+            }
+            const accountsCopy: JSX.Element[] = [];
+            for (let i = 0; i < items['accounts'].length; i++) {
+                const account = items['accounts'][i];
+                accountsCopy.push(<Account key={i} access_token={account['access_token']} canvas_url={account['canvas_url']} index={i} handleDelete={deleteAccount}></Account>);
+            }
+            setAccounts(accountsCopy);
+        });
+    }, []);
 
     const toggleHelp = () => {
         setHelp(!help);
     }
 
-    const validateInput = async (canvas_url: string, access_token: string) => {
-        chrome.storage.sync.get(['accounts'], items => {
-            if (!items['accounts']) {
-                return;
-            }
-            for (const account of items['accounts']) {
-                if (account['canvas_url'] === canvas_url && account['access_token'] === access_token) {
-                    return -1;
+    const validateInput = (canvas_url: string, access_token: string) => {
+        return new Promise<number>((resolve, reject) => {
+            chrome.storage.sync.get(['accounts'], async (items) => {
+                if (!items['accounts']) {
+                    resolve(0);
+                    return;
                 }
-            }
+                for (const account of items['accounts']) {
+                    if (account['canvas_url'] === canvas_url && account['access_token'] === access_token) {
+                        resolve(-1);
+                        return;
+                    }
+                }
+                const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(`https://${canvas_url}/api/v1/users/self?access_token=${access_token}`)}`);
+                resolve(response.status);
+            });
         });
-        const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(`https://${canvas_url}/api/v1/users/self?access_token=${access_token}`)}`)
-        return response.status;
     }
 
     const handleSave = () => {
         const accessTokenInput = document.getElementById("accessToken") as HTMLInputElement;
         const canvasURLInput = document.getElementById("canvasURL") as HTMLInputElement;
-        if (!accessTokenInput.value && !canvasURLInput.value && currentAccounts.length !== 0) {
+        if (!accessTokenInput.value && !canvasURLInput.value && accounts.length !== 0) {
             showApp();
         }
         if (!/^\d{4}~[A-Za-z0-9]{64}$/.test(accessTokenInput.value)) { // Validate access token
@@ -101,7 +117,7 @@ function Settings() {
                 </div>
             }
             <div className="accounts">
-                {!help && currentAccounts}
+                {!help && accounts}
             </div>
             <div className="inputContainer">
                 <label htmlFor="accessToken">Access Token:</label>

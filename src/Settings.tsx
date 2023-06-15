@@ -5,6 +5,30 @@ import './stylesheets/Settings.css';
 import Account from './Account';
 import Loading from './Loading';
 
+// Check validity of accounts
+const checkAccountsValidity = () => {
+    return new Promise<void>((resolve, reject) => {
+        chrome.storage.sync.get(['accounts'], async (items) => {
+            const accounts = items['accounts'];
+            if (!accounts) {
+                resolve();
+                return;
+            }
+            let i = 0;
+            while (i < accounts.length) {
+                const account = accounts[i];
+                const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(`https://${account['canvas_url']}/api/v1/users/self?access_token=${account['access_token']}`)}`);
+                if (response.status === 401 || response.status === 530) {
+                    accounts.splice(i, 1);
+                } else {
+                    i++;
+                }
+            }
+            resolve();
+        });
+    });
+}
+
 function Settings() {
     // State for showing/hiding help div
     const [help, setHelp] = useState(false);
@@ -25,19 +49,23 @@ function Settings() {
             setAccounts(accountsCopy);
         }
 
-        // Create existing account elements
-        chrome.storage.sync.get(['accounts'], items => {
-            if (!items['accounts']) {
+        // Check account validity
+        checkAccountsValidity()
+        .then(() => {
+            // Create existing account elements
+            chrome.storage.sync.get(['accounts'], items => {
+                if (!items['accounts']) {
+                    setLoading(false);
+                    return;
+                }
+                const accountsCopy: JSX.Element[] = [];
+                for (let i = 0; i < items['accounts'].length; i++) {
+                    const account = items['accounts'][i];
+                    accountsCopy.push(<Account key={i} access_token={account['access_token']} canvas_url={account['canvas_url']} index={i} handleDelete={deleteAccount}></Account>);
+                }
+                setAccounts(accountsCopy);
                 setLoading(false);
-                return;
-            }
-            const accountsCopy: JSX.Element[] = [];
-            for (let i = 0; i < items['accounts'].length; i++) {
-                const account = items['accounts'][i];
-                accountsCopy.push(<Account key={i} access_token={account['access_token']} canvas_url={account['canvas_url']} index={i} handleDelete={deleteAccount}></Account>);
-            }
-            setAccounts(accountsCopy);
-            setLoading(false);
+            });
         });
     }, []);
 

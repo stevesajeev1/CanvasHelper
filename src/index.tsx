@@ -48,11 +48,22 @@ export const showSettings = () => {
   	);
 }
 
-// Get existing accounts, if it exists
-chrome.storage.sync.get('accounts', items => {
-  	if (items['accounts']) {
-  	  	showApp();
-  	} else {
-  	  	showSettings();
-  	}
+// Check validity of accounts
+chrome.storage.sync.get(['accounts'], async (items) => {
+	const accounts = items['accounts'];
+	if (!accounts) {
+		showSettings();
+		return;
+	}
+	let i = 0;
+	while (i < accounts.length) {
+		const account = accounts[i];
+		const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(`https://${account['canvas_url']}/api/v1/users/self?access_token=${account['access_token']}`)}`);
+		if (response.status === 401 || response.status === 530) {
+			accounts.splice(i, 1);
+		} else {
+			i++;
+		}
+	}
+	showApp();
 });

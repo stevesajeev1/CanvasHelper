@@ -48,7 +48,7 @@ export const showSettings = () => {
   	);
 }
 
-// Get existing settings, if it exists
+// Get existing accounts, if it exists
 chrome.storage.sync.get('accounts', items => {
   	if (items['accounts']) {
   	  	showApp();

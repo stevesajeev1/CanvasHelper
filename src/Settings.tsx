@@ -1,33 +1,16 @@
 import { useState, useEffect } from 'react';
-import { showApp } from './index'
 import './stylesheets/shared.css';
 import './stylesheets/Settings.css';
 import Account from './Account';
 import Loading from './Loading';
 import Navigation from './Navigation';
 
-// Check validity of accounts
-const checkAccountsValidity = () => {
-    return new Promise<[]>((resolve, reject) => {
-        chrome.storage.sync.get(['accounts'], async (items) => {
-            const accounts = items['accounts'];
-            if (!accounts) {
-                resolve([]);
-                return;
-            }
-            let i = 0;
-            while (i < accounts.length) {
-                const account = accounts[i];
-                const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(`https://${account['canvas_url']}/api/v1/users/self?access_token=${account['access_token']}`)}`);
-                if (response.status === 401 || response.status === 530) {
-                    accounts.splice(i, 1);
-                } else {
-                    i++;
-                }
-            }
-            resolve(accounts);
-        });
-    });
+// Enums for response
+enum Validity {
+    INVALID_TOKEN = 401,
+    INVALID_URL = 530,
+    ALREADY_EXISTS = -1,
+    OK = 0
 }
 
 function Settings() {
@@ -40,26 +23,52 @@ function Settings() {
     // State for loading accounts
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const deleteAccount = (newAccounts: {[key: string]: string}[]) => {
-            const accountsCopy: JSX.Element[] = [];
-            for (let i = 0; i < newAccounts.length; i++) {
-                const account = newAccounts[i];
-                accountsCopy.push(<Account key={i} access_token={account['access_token']} canvas_url={account['canvas_url']} index={i} handleDelete={deleteAccount}></Account>);
-            }
-            setAccounts(accountsCopy);
-        }
+    // State for navigation panel
+    const [navPanel, setNavPanel] = useState(false);
 
+    // Check validity of accounts
+    const checkAccountsValidity = () => {
+        return new Promise<[]>((resolve, reject) => {
+            chrome.storage.sync.get(['accounts'], async (items) => {
+                const validAccounts = items['accounts'];
+                if (!validAccounts || validAccounts.length === 0) {
+                    resolve([]);
+                    return;
+                }
+                setNavPanel(true);
+                let i = 0;
+                while (i < validAccounts.length) {
+                    const account = validAccounts[i];
+                    const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(`https://${account['canvas_url']}/api/v1/users/self?access_token=${account['access_token']}`)}`);
+                    if (response.status === 401 || response.status === 530) {
+                        validAccounts.splice(i, 1);
+                    } else {
+                        i++;
+                    }
+                }
+                resolve(validAccounts);
+            });
+        });
+    }
+
+    const showAccounts = (newAccounts: {[key: string]: string}[]) => {
+        if (newAccounts.length === 0) {
+            setNavPanel(false);
+        }
+        const accountsCopy: JSX.Element[] = [];
+        for (let i = 0; i < newAccounts.length; i++) {
+            const account = newAccounts[i];
+            accountsCopy.push(<Account key={i} access_token={account['access_token']} canvas_url={account['canvas_url']} index={i} handleDelete={showAccounts}></Account>);
+        }
+        setAccounts(accountsCopy);
+    }
+
+    useEffect(() => {
         // Check account validity
         checkAccountsValidity()
         .then((validAccounts) => {
-            // Create existing account elements
-            const accountsCopy: JSX.Element[] = [];
-            for (let i = 0; i < validAccounts.length; i++) {
-                const account = validAccounts[i];
-                accountsCopy.push(<Account key={i} access_token={account['access_token']} canvas_url={account['canvas_url']} index={i} handleDelete={deleteAccount}></Account>);
-            }
-            setAccounts(accountsCopy);
+            // Show valid accounts
+            showAccounts(validAccounts);
             setLoading(false);
         });
     }, []);
@@ -71,13 +80,13 @@ function Settings() {
     const validateInput = (canvas_url: string, access_token: string) => {
         return new Promise<number>((resolve, reject) => {
             chrome.storage.sync.get(['accounts'], async (items) => {
-                if (!items['accounts']) {
-                    resolve(0);
+                if (!items['accounts'] || items['accounts'].length === 0) {
+                    resolve(Validity.OK);
                     return;
                 }
                 for (const account of items['accounts']) {
                     if (account['canvas_url'] === canvas_url && account['access_token'] === access_token) {
-                        resolve(-1);
+                        resolve(Validity.ALREADY_EXISTS);
                         return;
                     }
                 }
@@ -90,9 +99,6 @@ function Settings() {
     const handleSave = () => {
         const accessTokenInput = document.getElementById("accessToken") as HTMLInputElement;
         const canvasURLInput = document.getElementById("canvasURL") as HTMLInputElement;
-        if (!accessTokenInput.value && !canvasURLInput.value && accounts.length !== 0) {
-            showApp();
-        }
         if (!/^\d{4}~[A-Za-z0-9]{64}$/.test(accessTokenInput.value)) { // Validate access token
             accessTokenInput.setCustomValidity("Enter a valid access token!");
             accessTokenInput.reportValidity();
@@ -105,19 +111,19 @@ function Settings() {
         }
         (async () => {
             const status = await validateInput(canvasURLInput.value, accessTokenInput.value);
-            if (status === 401) {
+            if (status === Validity.INVALID_TOKEN) {
                 accessTokenInput.setCustomValidity("This access token does not exist!");
                 accessTokenInput.reportValidity();
-            } else if (status === 530) {
+            } else if (status === Validity.INVALID_URL) {
                 canvasURLInput.setCustomValidity("This canvas URL does not exist!");
                 canvasURLInput.reportValidity();
-            } else if (status === -1) {
+            } else if (status === Validity.ALREADY_EXISTS) {
                 accessTokenInput.setCustomValidity("This account is already in the system!");
                 accessTokenInput.reportValidity();
             } else {
                 chrome.storage.sync.get(['accounts'], async items => {
                     let accounts: {}[] = items['accounts'];
-                    if (!accounts) {
+                    if (!accounts || accounts.length === 0) {
                         accounts = [];
                     }
                     accounts.push({
@@ -125,7 +131,11 @@ function Settings() {
                         'canvas_url': canvasURLInput.value
                     });
                     chrome.storage.sync.set({'accounts': accounts}, () => {
-                        showApp();
+                        showAccounts(accounts);
+                        setNavPanel(true);
+                        // Clear input
+                        accessTokenInput.value = "";
+                        canvasURLInput.value = "";
                     });
                 });
             }
@@ -170,7 +180,7 @@ function Settings() {
                 </div>
                 <button className="save" onClick={handleSave}>Save</button>
             </div>
-            {accounts.length !== 0 && <Navigation currentPage="settings"/>}
+            {navPanel && <Navigation currentPage="settings"/>}
         </div>
     );
 }

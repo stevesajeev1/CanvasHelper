@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom/client';
 import './stylesheets/shared.css';
-import App from './App';
+import List from './List';
 import Settings from './Settings'
 
 // If development, set global chrome variable
@@ -36,9 +36,9 @@ const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );
 
-export const showApp = () => {
+export const showList = () => {
   	root.render(
-    	<App />
+    	<List />
   	);
 }
 
@@ -50,8 +50,8 @@ export const showSettings = () => {
 
 // Get existing accounts, if it exists
 chrome.storage.sync.get('accounts', items => {
-  	if (items['accounts']) {
-  	  	showApp();
+  	if (items['accounts']?.length !== 0) {
+  	  	showList();
   	} else {
   	  	showSettings();
   	}

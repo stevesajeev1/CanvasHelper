@@ -4,6 +4,7 @@ import './stylesheets/shared.css';
 import './stylesheets/Settings.css';
 import Account from './Account';
 import Loading from './Loading';
+import Navigation from './Navigation';
 
 // Check validity of accounts
 const checkAccountsValidity = () => {
@@ -133,40 +134,43 @@ function Settings() {
 
     return (
         <div className="Settings">
-            <h1 className="settingsHeader">Settings</h1>
-            <p className="helpLine" onClick={toggleHelp}>How do I get this information?</p>
-            {help &&
-                <div className="help">
-                    <ol className="helpSteps">
-                        <li className="helpStep">In Canvas, click the "profile" link in the top right menu bar, or navigate to <code className="url">/profile</code>. Then, click on Settings, or navigate to <code className="url">/profile/settings</code>.</li>
-                        <li className="helpStep">Under the "Approved Integrations" section, click the button to generate a new access token. You can set anything for the purpose field, but <strong>leave the expires field blank</strong></li>
-                        <li className="helpStep">Once the token is generated, enter it into the "Access Token" input field below. Enter the domain name of Canvas in the "Canvas URL" input field below.</li>
-                    </ol>
+            <div className="container">
+                <h1 className="settingsHeader">Settings</h1>
+                <p className="helpLine" onClick={toggleHelp}>How do I get this information?</p>
+                {help &&
+                    <div className="help">
+                        <ol className="helpSteps">
+                            <li className="helpStep">In Canvas, click the "profile" link in the top right menu bar, or navigate to <code className="url">/profile</code>. Then, click on Settings, or navigate to <code className="url">/profile/settings</code>.</li>
+                            <li className="helpStep">Under the "Approved Integrations" section, click the button to generate a new access token. You can set anything for the purpose field, but <strong>leave the expires field blank</strong></li>
+                            <li className="helpStep">Once the token is generated, enter it into the "Access Token" input field below. Enter the domain name of Canvas in the "Canvas URL" input field below.</li>
+                        </ol>
+                    </div>
+                }
+                {loading && <Loading size={20}/>}
+                <div className="accounts">
+                    {!help && accounts}
                 </div>
-            }
-            {loading && <Loading size={20}/>}
-            <div className="accounts">
-                {!help && accounts}
+                <div className="inputContainer">
+                    <label htmlFor="accessToken">Access Token:</label>
+                    <input
+                        type="text"
+                        id="accessToken"
+                        placeholder="1234~abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ab"
+                        autoComplete="off"
+                    />
+                </div>
+                <div className="inputContainer">
+                    <label htmlFor="canvasURL">Canvas URL:</label>
+                    <input
+                        type="text"
+                        id="canvasURL"
+                        placeholder="scps.instructure.com"
+                        autoComplete="off"
+                    />
+                </div>
+                <button className="save" onClick={handleSave}>Save</button>
             </div>
-            <div className="inputContainer">
-                <label htmlFor="accessToken">Access Token:</label>
-                <input
-                    type="text"
-                    id="accessToken"
-                    placeholder="1234~abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ab"
-                    autoComplete="off"
-                />
-            </div>
-            <div className="inputContainer">
-                <label htmlFor="canvasURL">Canvas URL:</label>
-                <input
-                    type="text"
-                    id="canvasURL"
-                    placeholder="scps.instructure.com"
-                    autoComplete="off"
-                />
-            </div>
-            <button className="save" onClick={handleSave}>Save</button>
+            {accounts.length !== 0 && <Navigation currentPage="settings"/>}
         </div>
     );
 }

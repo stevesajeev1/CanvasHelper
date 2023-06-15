@@ -1,16 +1,18 @@
-import { showSettings } from './index'
+import { showApp, showSettings } from './index'
 import settings from './assets/settings.svg';
+import list from './assets/list.svg';
 import calendar from './assets/calendar.svg';
 import notification from './assets/notification.svg'
 import './stylesheets/shared.css';
 import './stylesheets/Navigation.css';
 
-function Navigation() {
+function Navigation({ currentPage }: { currentPage: string }) {
     return (
         <div className="navPanel">
-			<img src={settings} className="settings" onClick={showSettings} alt="settings" />
-			<img src={calendar} alt="calendar"></img>
-			<img src={notification} className="notification" alt="notification"></img>
+			{currentPage !== "settings" && <img src={settings} className="settings" onClick={showSettings} alt="settings" />}
+			{currentPage !== "list" && <img src={list} className="list" onClick={showApp} alt="list" />}
+			{currentPage !== "calendar" && <img src={calendar} alt="calendar"></img>}
+			{currentPage !== "notification" && <img src={notification} className="notification" alt="notification"></img>}
 		</div>
     );
 

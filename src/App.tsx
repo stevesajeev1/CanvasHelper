@@ -27,7 +27,7 @@ function App() {
 			<div className="container">
 				<Clock />
 			</div>
-  	  	  	<Navigation />
+  	  	  	<Navigation currentPage="list"/>
   	  	</div>
   	);
 }

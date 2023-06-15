@@ -1,11 +1,18 @@
 .Settings {
+    position: relative;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     background-color: var(--bg);
     font-family: 'Roboto', sans-serif; 
     height: 100%;
+    max-width: 100%;
     color: white;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
 }
 
 .settingsHeader {
@@ -67,7 +74,7 @@
 }
 
 .inputContainer > input {
-    height: 20px;
+    height: 25px;
     font-weight: bold;
     background-color: var(--white);
 }

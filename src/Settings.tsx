@@ -7,11 +7,11 @@ import Loading from './Loading';
 
 // Check validity of accounts
 const checkAccountsValidity = () => {
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<[]>((resolve, reject) => {
         chrome.storage.sync.get(['accounts'], async (items) => {
             const accounts = items['accounts'];
             if (!accounts) {
-                resolve();
+                resolve([]);
                 return;
             }
             let i = 0;
@@ -24,7 +24,7 @@ const checkAccountsValidity = () => {
                     i++;
                 }
             }
-            resolve();
+            resolve(accounts);
         });
     });
 }
@@ -51,21 +51,15 @@ function Settings() {
 
         // Check account validity
         checkAccountsValidity()
-        .then(() => {
+        .then((validAccounts) => {
             // Create existing account elements
-            chrome.storage.sync.get(['accounts'], items => {
-                if (!items['accounts']) {
-                    setLoading(false);
-                    return;
-                }
-                const accountsCopy: JSX.Element[] = [];
-                for (let i = 0; i < items['accounts'].length; i++) {
-                    const account = items['accounts'][i];
-                    accountsCopy.push(<Account key={i} access_token={account['access_token']} canvas_url={account['canvas_url']} index={i} handleDelete={deleteAccount}></Account>);
-                }
-                setAccounts(accountsCopy);
-                setLoading(false);
-            });
+            const accountsCopy: JSX.Element[] = [];
+            for (let i = 0; i < validAccounts.length; i++) {
+                const account = validAccounts[i];
+                accountsCopy.push(<Account key={i} access_token={account['access_token']} canvas_url={account['canvas_url']} index={i} handleDelete={deleteAccount}></Account>);
+            }
+            setAccounts(accountsCopy);
+            setLoading(false);
         });
     }, []);
 

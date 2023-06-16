@@ -2,9 +2,9 @@ import { useEffect } from 'react';
 import Navigation from './Navigation'
 import Clock from './Clock'
 import './stylesheets/shared.css';
-import './stylesheets/App.css';
+import './stylesheets/List.css';
 
-function App() {
+function List() {
 	const fetchAssignments = async (canvas_url: string, access_token: string) => {
 		const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(`https://${canvas_url}/api/v1/users/self/upcoming_events?access_token=${access_token}`)}`)
 		const data = await response.json();
@@ -23,8 +23,8 @@ function App() {
 	});
 
   	return (
-  	  	<div className="App">
-			<div className="container">
+  	  	<div className="List">
+			<div className="list-container">
 				<Clock />
 				<div className="items">
 
@@ -36,4 +36,4 @@ function App() {
   	);
 }
 
-export default App;
+export default List;

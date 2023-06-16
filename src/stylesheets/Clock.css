@@ -1,4 +1,5 @@
 .Clock {
+    align-self: flex-start;
     width: 100%;
     font-family: 'Roboto', sans-serif;
     background-color: var(--bg-lighter);

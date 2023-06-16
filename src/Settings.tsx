@@ -145,7 +145,7 @@ function Settings() {
 
     return (
         <div className="Settings">
-            <div className="container">
+            <div className="settings-container">
                 <h1 className="settingsHeader">Settings</h1>
                 <p className="helpLine" onClick={toggleHelp}>How do I get this information?</p>
                 {help &&

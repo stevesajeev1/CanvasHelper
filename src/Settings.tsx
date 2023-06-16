@@ -49,6 +49,7 @@ function Settings() {
                 if (validAccounts.length === 0) {
                     setNavPanel(false);
                 }
+                chrome.storage.sync.set({'accounts': validAccounts});
                 resolve(validAccounts);
             });
         });

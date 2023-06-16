@@ -13,6 +13,10 @@ enum Validity {
     OK = 0
 }
 
+enum ResponseType {
+    ERROR = 2
+}
+
 function Settings() {
     // State for showing/hiding help div
     const [help, setHelp] = useState(false);
@@ -40,7 +44,7 @@ function Settings() {
                 while (i < validAccounts.length) {
                     const account = validAccounts[i];
                     const response = await chrome.runtime.sendMessage({query: "validate", canvas_url: account['canvas_url'], access_token: account['access_token']});
-                    if (response === Validity.INVALID_TOKEN || response === Validity.INVALID_URL) {
+                    if (response === Validity.INVALID_TOKEN || response === Validity.INVALID_URL || response === ResponseType.ERROR) {
                         validAccounts.splice(i, 1);
                     } else {
                         i++;
@@ -81,7 +85,7 @@ function Settings() {
     const validateInput = (canvas_url: string, access_token: string) => {
         return new Promise<number>(async (resolve, reject) => {
             const response = await chrome.runtime.sendMessage({query: "validate", canvas_url: canvas_url, access_token: access_token});
-            if (response === Validity.INVALID_TOKEN || response === Validity.INVALID_URL) {
+            if (response === Validity.INVALID_TOKEN || response === Validity.INVALID_URL || response === ResponseType.ERROR) {
                 resolve(response);
                 return;
             }
@@ -118,7 +122,7 @@ function Settings() {
             if (status === Validity.INVALID_TOKEN) {
                 accessTokenInput.setCustomValidity("This access token does not exist!");
                 accessTokenInput.reportValidity();
-            } else if (status === Validity.INVALID_URL) {
+            } else if (status === Validity.INVALID_URL || status === ResponseType.ERROR) {
                 canvasURLInput.setCustomValidity("This canvas URL does not exist!");
                 canvasURLInput.reportValidity();
             } else if (status === Validity.ALREADY_EXISTS) {

@@ -2,9 +2,13 @@ import logo from '../assets/logo.png'
 
 // Enums for response
 enum Validity {
-    INVALID_TOKEN = 401,
-    INVALID_URL = 530,
-    OK = 0
+    INVALID_URL = 530
+}
+
+enum ResponseType {
+    STATUS,
+    JSON,
+    ERROR
 }
 
 // If development, set global chrome variable for runtime
@@ -49,18 +53,42 @@ chrome.runtime.onStartup.addListener(() => {
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.query === "validate") {
-        let url = `https://${request.canvas_url}/api/v1/users/self?access_token=${request.access_token}`;
+    let url = '';
+    let responseType: ResponseType;
 
-        // If development, use a CORS proxy
-        if (process.env.NODE_ENV === "development") {
-            url = `https://corsproxy.io/?${encodeURIComponent(url)}`;
+    switch (request.query) {
+        case 'validate': {
+            url = `https://${request.canvas_url}/api/v1/users/self?access_token=${request.access_token}`;
+            responseType = ResponseType.STATUS;
+            break;
         }
-
-        fetch(url)
-        .then(response => sendResponse(response.status))
-        .catch(_error => sendResponse(Validity.INVALID_URL));
-
-        return true;
+        case 'todo': {
+            url = `https://${request.canvas_url}/api/v1/users/self/upcoming_events?access_token=${request.access_token}`;
+            responseType = ResponseType.JSON;
+            break;
+        }
     }
+
+    // If development, use a CORS proxy
+    if (process.env.NODE_ENV === "development") {
+        url = `https://corsproxy.io/?${encodeURIComponent(url)}`;
+    }
+
+    fetch(url)
+    .then(async response => {
+        switch (responseType) {
+            case ResponseType.STATUS: {
+                sendResponse(response.status);
+                break;
+            }
+            case ResponseType.JSON: {
+                const json = await response.json();
+                sendResponse(json);
+                break;
+            }
+        }
+    })
+    .catch(_error => sendResponse(ResponseType.ERROR));
+
+    return true;
 });

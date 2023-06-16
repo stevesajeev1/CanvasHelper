@@ -39,8 +39,8 @@ function Settings() {
                 let i = 0;
                 while (i < validAccounts.length) {
                     const account = validAccounts[i];
-                    const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(`https://${account['canvas_url']}/api/v1/users/self?access_token=${account['access_token']}`)}`);
-                    if (response.status === 401 || response.status === 530) {
+                    const response = await chrome.runtime.sendMessage({query: "validate", canvas_url: account['canvas_url'], access_token: account['access_token']});
+                    if (response === Validity.INVALID_TOKEN || response === Validity.INVALID_URL) {
                         validAccounts.splice(i, 1);
                     } else {
                         i++;
@@ -79,7 +79,12 @@ function Settings() {
     }
 
     const validateInput = (canvas_url: string, access_token: string) => {
-        return new Promise<number>((resolve, reject) => {
+        return new Promise<number>(async (resolve, reject) => {
+            const response = await chrome.runtime.sendMessage({query: "validate", canvas_url: canvas_url, access_token: access_token});
+            if (response === Validity.INVALID_TOKEN || response === Validity.INVALID_URL) {
+                resolve(response);
+                return;
+            }
             chrome.storage.sync.get(['accounts'], async (items) => {
                 if (!items['accounts'] || items['accounts'].length === 0) {
                     resolve(Validity.OK);
@@ -91,8 +96,6 @@ function Settings() {
                         return;
                     }
                 }
-                const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(`https://${canvas_url}/api/v1/users/self?access_token=${access_token}`)}`);
-                resolve(response.status);
             });
         });
     }

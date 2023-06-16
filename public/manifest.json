@@ -21,6 +21,6 @@
     "<all_urls>"
   ],
   "background": {
-    "service_worker": "static/js/background/startup.js"
+    "service_worker": "static/js/background/service-worker.js"
   }
 }

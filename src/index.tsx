@@ -3,7 +3,7 @@ import './stylesheets/shared.css';
 import List from './List';
 import Settings from './Settings'
 
-// If development, set global chrome variable
+// If development, set global chrome variable for storage
 if (process.env.NODE_ENV === "development") {
 	const chromeStorage = {} as {[key: string]: string};
     (global as any).chrome = {

@@ -26,6 +26,10 @@ function App() {
   	  	<div className="App">
 			<div className="container">
 				<Clock />
+				<div className="items">
+
+				</div>
+				<div className="createNew"></div>
 			</div>
   	  	  	<Navigation currentPage="list"/>
   	  	</div>

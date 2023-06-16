@@ -50,7 +50,7 @@ export const showSettings = () => {
 
 // Get existing accounts, if it exists
 chrome.storage.sync.get('accounts', items => {
-  	if (items['accounts']?.length !== 0) {
+  	if (items['accounts'] && items['accounts'].length !== 0) {
   	  	showList();
   	} else {
   	  	showSettings();

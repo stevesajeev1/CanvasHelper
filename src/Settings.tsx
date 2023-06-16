@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './stylesheets/shared.css';
 import './stylesheets/Settings.css';
-import Account from './Account';
+import Accounts from './Accounts';
 import Loading from './Loading';
 import Navigation from './Navigation';
 
@@ -18,7 +18,7 @@ function Settings() {
     const [help, setHelp] = useState(false);
 
     // State for accounts in system
-    const [accounts, setAccounts] = useState<JSX.Element[]>([]);
+    const [accounts, setAccounts] = useState<{}[]>([]);
 
     // State for loading accounts
     const [loading, setLoading] = useState(true);
@@ -51,27 +51,24 @@ function Settings() {
         });
     }
 
-    const showAccounts = (newAccounts: {[key: string]: string}[]) => {
-        if (newAccounts.length === 0) {
-            setNavPanel(false);
-        }
-        const accountsCopy: JSX.Element[] = [];
-        for (let i = 0; i < newAccounts.length; i++) {
-            const account = newAccounts[i];
-            accountsCopy.push(<Account key={i} access_token={account['access_token']} canvas_url={account['canvas_url']} index={i} handleDelete={showAccounts}></Account>);
-        }
-        setAccounts(accountsCopy);
-    }
-
     useEffect(() => {
         // Check account validity
         checkAccountsValidity()
         .then((validAccounts) => {
             // Show valid accounts
-            showAccounts(validAccounts);
+            setAccounts(validAccounts);
             setLoading(false);
         });
     }, []);
+
+    const deleteAccount = (index: number) => {
+        const newAccounts = [...accounts.slice(0, index), ...accounts.slice(index + 1)];
+        if (newAccounts.length === 0) {
+            setNavPanel(false);
+        }
+        chrome.storage.sync.set({'accounts': newAccounts});
+        setAccounts(newAccounts);
+    }
 
     const toggleHelp = () => {
         setHelp(!help);
@@ -131,7 +128,7 @@ function Settings() {
                         'canvas_url': canvasURLInput.value
                     });
                     chrome.storage.sync.set({'accounts': accounts}, () => {
-                        showAccounts(accounts);
+                        setAccounts(accounts);
                         setNavPanel(true);
                         // Clear input
                         accessTokenInput.value = "";
@@ -158,7 +155,7 @@ function Settings() {
                 }
                 {loading && <Loading size={20}/>}
                 <div className="accounts">
-                    {!help && accounts}
+                    {!help && <Accounts accounts={accounts} deleteAccount={deleteAccount} />}
                 </div>
                 <div className="inputContainer">
                     <label htmlFor="accessToken">Access Token:</label>

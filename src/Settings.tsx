@@ -46,6 +46,9 @@ function Settings() {
                         i++;
                     }
                 }
+                if (validAccounts.length === 0) {
+                    setNavPanel(false);
+                }
                 resolve(validAccounts);
             });
         });

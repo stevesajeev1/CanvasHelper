@@ -1,10 +1,6 @@
 import logo from '../assets/logo.png'
 
-// Enums for response
-enum Validity {
-    INVALID_URL = 530
-}
-
+// Enums for ResponseType
 enum ResponseType {
     STATUS,
     JSON,

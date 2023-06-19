@@ -100,6 +100,7 @@ function Settings() {
                         return;
                     }
                 }
+                resolve(Validity.OK);
             });
         });
     }

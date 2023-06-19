@@ -11,16 +11,19 @@ if (process.env.NODE_ENV === "development") {
 			sync: {
 				set: (data: { [key: string]: string }, callback?: () => void) => {
 					for (const [key, value] of Object.entries(data)) {
-						localStorage.setItem(key, value);
+						localStorage.setItem(key, JSON.stringify(value));
 					}
 					if (callback) {
 						callback();
 					}
 				},
-				get: (keys: string[], callback?: (result: { [key: string]: (string | null) }) => void) => {
-					const output: { [key: string]: (string | null) } = {};
+				get: (keys: string[], callback?: (result: { [key: string]: any }) => void) => {
+					const output: { [key: string]: any } = {};
 					for (const key of keys) {
-					  	output[key] = localStorage.getItem(key);
+						const storedValue = localStorage.getItem(key);
+						if (storedValue !== null) {
+							output[key] = JSON.parse(storedValue);
+						}
 					}
 					if (callback) {
 						callback(output);

@@ -48,6 +48,17 @@ chrome.runtime.onStartup.addListener(() => {
     });
 });
 
+const parseLinkHeader = (linkHeader: string, access_token: string) => {
+    const relPortions = linkHeader.split(",");
+    const output: { [key: string]: string } = {};
+    for (const relPortion of relPortions) {
+        const relDesc: string = relPortion.matchAll(/"(.*)"/gm).next().value[1];
+        const relLinks: string = relPortion.matchAll(/<(.*)>/gm).next().value[1];
+        output[relDesc] = relLinks + `&access_token=${access_token}`;
+    }
+    return output;
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     let url = '';
     let responseType: ResponseType;
@@ -78,8 +89,27 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 break;
             }
             case ResponseType.JSON: {
-                const json = await response.json();
-                sendResponse(json);
+                const output = [];
+                let json = await response.json();
+                output.push(json);
+
+                let linkHeader = response.headers.get('Link');
+                if (linkHeader) {
+                    let links = parseLinkHeader(linkHeader, request.access_token);
+                    while ('next' in links) {
+                        const newResponse = await fetch(links['next']);
+                        json = await newResponse.json();
+                        output.push(json);
+                        linkHeader = newResponse.headers.get('Link');
+                        if (linkHeader) {
+                            links = parseLinkHeader(linkHeader, request.access_token);
+                        } else {
+                            break;
+                        }
+                    }
+                }
+
+                sendResponse(output.flat());
                 break;
             }
         }

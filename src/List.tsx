@@ -6,20 +6,21 @@ import './stylesheets/shared.css';
 import './stylesheets/List.css';
 
 function List() {
-	const fetchAssignments = async (canvas_url: string, access_token: string) => {
-		const response = await chrome.runtime.sendMessage({query: "todo", canvas_url: canvas_url, access_token: access_token});
-		return response;
+	const fetchAssignments = async (accounts: { [key: string]: string }[]) => {
+		return new Promise<{}[]>(async (resolve, reject) => {
+			const assignments = [];
+			for (const account of accounts) {
+				assignments.push(await chrome.runtime.sendMessage({query: "todo", canvas_url: account['canvas_url'], access_token: account['access_token']}));
+			}
+			resolve(assignments);
+        });
 	}
 
 	useEffect(() => {
-		chrome.storage.sync.get(['accounts'], items => {
+		chrome.storage.sync.get(['accounts'], async items => {
 			const accounts = items['accounts'];
-			for (const account of accounts) {
-				(async () => {
-					const assignments = await fetchAssignments(account['canvas_url'], account['access_token']);
-					console.log(assignments);
-				})();
-			}
+			const assignmentsCopy = await fetchAssignments(accounts);
+			console.log(assignmentsCopy);
 	  	});
 	}, []);
 

@@ -42,7 +42,7 @@
 }
 
 .accounts {
-    width: 100%;
+    width: 85%;
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -50,6 +50,15 @@
     max-height: 190px;
     overflow-y: auto;
     margin-bottom: 16px;
+}
+
+.accounts::-webkit-scrollbar {
+    width: 10px;
+}
+
+.accounts::-webkit-scrollbar-thumb {
+    background : var(--blue-darker);
+    border-radius: 10px;
 }
 
 .url {

@@ -1,7 +1,7 @@
 .account {
     display: flex;
     align-items: center;
-    width: 80%;
+    width: calc(0.8 * 100% / 0.85);
     padding-left: 10px;
     padding-right: 10px;
     column-gap: 10px;

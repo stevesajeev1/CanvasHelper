@@ -39,6 +39,7 @@ if (process.env.NODE_ENV === "development") {
 	};
 }
 
+/*
 chrome.runtime.onStartup.addListener(() => {
     chrome.notifications.create({
         iconUrl: logo,
@@ -47,6 +48,7 @@ chrome.runtime.onStartup.addListener(() => {
         message: 'Notification Body'
     });
 });
+*/
 
 const parseLinkHeader = (linkHeader: string, access_token: string) => {
     const relPortions = linkHeader.split(",");
@@ -70,7 +72,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             break;
         }
         case 'todo': {
-            url = `https://${request.canvas_url}/api/v1/users/self/upcoming_events?access_token=${request.access_token}`;
+            url = `https://${request.canvas_url}/api/v1/planner/items?start_date=${encodeURIComponent(new Date().toISOString())}&access_token=${request.access_token}`;
+            responseType = ResponseType.JSON;
+            break;
+        }
+        case 'classes': {
+            url = `https://${request.canvas_url}/api/v1/dashboard/dashboard_cards?access_token=${request.access_token}`;
             responseType = ResponseType.JSON;
             break;
         }

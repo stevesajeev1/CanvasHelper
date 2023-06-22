@@ -62,7 +62,7 @@ function Settings() {
     useEffect(() => {
         // Check account validity
         checkAccountsValidity()
-        .then((validAccounts) => {
+        .then(validAccounts => {
             // Show valid accounts
             setAccounts(validAccounts);
             setLoading(false);

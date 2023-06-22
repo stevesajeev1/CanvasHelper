@@ -10,6 +10,7 @@
 }
 
 .navPanel > img {
+    position: relative;
     height: 30px;
     width: 30px;
     cursor: pointer;
@@ -17,14 +18,6 @@
 
 .navPanel > img:hover {
     filter: brightness(0) invert(1);
-}
-
-.settings {
-    transition: transform 0.5s ease-in-out;
-}
-
-.settings:hover {
-    transform: rotate(45deg);
 }
 
 .notification:hover {

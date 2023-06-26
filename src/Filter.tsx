@@ -1,17 +1,18 @@
 import React, { useEffect, useState, useRef } from 'react';
 import expand_dropdown from './assets/expand_dropdown.svg';
 import close_dropdown from './assets/close_dropdown.svg';
+import Loading from './Loading';
 import './stylesheets/shared.css';
 import './stylesheets/Filter.css';
 
-function Filter({ accounts, classes, filter, setFilter }: { accounts: { [key: string]: any }[], classes: { [key: string]: any }[][], filter: string[], setFilter: (newFilter: string[]) => void }) {
+function Filter({ accounts, classes, loading, filter, setFilter }: { accounts: { [key: string]: any }[], classes: { [key: string]: any }[][], filter: string[], loading: boolean, setFilter: (newFilter: string[]) => void }) {
     // Set state for dropdown visibility
     const [dropdown, setDropdown] = useState(false);
 
     const options = useRef<HTMLDivElement>(null);
 
     const toggleFilter = () => {
-        if (dropdown && options.current) { // Save filter
+        if (dropdown && !loading && options.current) { // Save filter
             const newFilter: string[] = [];
             Array.from(options.current.children).forEach(child => {
                 if (child.className === "course" && !(child.firstElementChild as HTMLInputElement).checked) {
@@ -65,7 +66,7 @@ function Filter({ accounts, classes, filter, setFilter }: { accounts: { [key: st
     }
 
     useEffect(() => {
-        if (dropdown) {
+        if (dropdown && !loading) {
             if (options.current) {
                 let parent: Element | undefined;
                 let allChecked = false;
@@ -109,7 +110,9 @@ function Filter({ accounts, classes, filter, setFilter }: { accounts: { [key: st
             <div className="dropdown-content">
                 <hr></hr>
                 <div className="options" ref={options}>
-                    {classes.map((account, accountIndex) => {
+                    {loading ? 
+                    <Loading size={30}/> :
+                    classes.map((account, accountIndex) => {
                         return (
                             <React.Fragment key={accountIndex}>
                                 <label><input type="checkbox" onChange={handleCheck}/>{accounts[accountIndex]['canvas_url']}</label>

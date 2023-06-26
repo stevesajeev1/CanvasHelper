@@ -61,6 +61,30 @@ const parseLinkHeader = (linkHeader: string, access_token: string) => {
     return output;
 }
 
+const paginate = async (response: Response, request: {[key: string]: any}) => {
+    const output = [];
+    let json = await response.json();
+    output.push(json);
+
+    let linkHeader = response.headers.get('Link');
+    if (linkHeader) {
+        let links = parseLinkHeader(linkHeader, request.access_token);
+        while ('next' in links) {
+            const newResponse = await fetch(links['next']);
+            json = await newResponse.json();
+            output.push(json);
+            linkHeader = newResponse.headers.get('Link');
+            if (linkHeader) {
+                links = parseLinkHeader(linkHeader, request.access_token);
+            } else {
+                break;
+            }
+        }
+    }
+
+    return output.flat();
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     let url = '';
     let responseType: ResponseType;
@@ -96,27 +120,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 break;
             }
             case ResponseType.JSON: {
-                const output = [];
-                let json = await response.json();
-                output.push(json);
-
-                let linkHeader = response.headers.get('Link');
-                if (linkHeader) {
-                    let links = parseLinkHeader(linkHeader, request.access_token);
-                    while ('next' in links) {
-                        const newResponse = await fetch(links['next']);
-                        json = await newResponse.json();
-                        output.push(json);
-                        linkHeader = newResponse.headers.get('Link');
-                        if (linkHeader) {
-                            links = parseLinkHeader(linkHeader, request.access_token);
-                        } else {
-                            break;
-                        }
-                    }
-                }
-
-                sendResponse(output.flat());
+                const output = await paginate(response, request);
+                sendResponse(output);
                 break;
             }
         }

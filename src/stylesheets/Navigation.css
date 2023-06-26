@@ -20,6 +20,14 @@
     filter: brightness(0) invert(1);
 }
 
+.settings {
+    transition: transform 0.5s ease-in-out;
+}
+
+.settings:hover {
+    transform: rotate(45deg);
+}
+
 .notification:hover {
     animation: shake 0.8s ease both;
 }

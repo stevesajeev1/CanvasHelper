@@ -16,19 +16,26 @@
 	min-width: 0;
 }
 
-.content-container {
+.items-wrapper {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-	flex-grow: 1;
-    height: 100%;
-    min-width: 0;
+    flex: 1;
+    overflow-y: auto;
 }
 
-.items {
-    width: 100%;
-    flex: 1;
+.items-wrapper > span {
+    align-self: center;
+    margin: auto;
+}
+
+.items-wrapper::-webkit-scrollbar {
+    width: 10px;
+    background-color: black;
+    border-left: 3px solid var(--bg);
+}
+
+.items-wrapper::-webkit-scrollbar-thumb {
+    background : var(--blue-lighter);
+    border-radius: 10px;
 }
 
 .add-new {

@@ -3,6 +3,7 @@ import Navigation from './Navigation'
 import Loading from './Loading'
 import Clock from './Clock'
 import Filter from './Filter'
+import Items from './Items'
 import add from './assets/add.svg';
 import './stylesheets/shared.css';
 import './stylesheets/List.css';
@@ -29,7 +30,8 @@ function List() {
 	// State for classes
 	const [classes, setClasses] = useState<{}[][]>([[]]);
 
-	// State for assignments
+	// State for items
+	const [items, setItems] = useState<{}[]>([]);
 
 	// State for filter
 	const [filter, setFilter] = useState<string[]>([]);
@@ -59,11 +61,19 @@ function List() {
         });
     }
 
-	const fetchAssignments = async (accounts: { [key: string]: string }[]) => {
+	const fetchItems = async (accounts: { [key: string]: string }[]) => {
 		return new Promise<{}[]>(async (resolve, reject) => {
-			const assignments = [];
+			const assignments: {}[] = [];
 			for (const account of accounts) {
-				assignments.push(await chrome.runtime.sendMessage({query: "todo", canvas_url: account['canvas_url'], access_token: account['access_token']}));
+				const accountItems: { [key: string]: any }[] = await chrome.runtime.sendMessage({query: "todo", canvas_url: account['canvas_url'], access_token: account['access_token']});
+				accountItems.forEach(accountItem => {
+					if (accountItem['submissions'] !== false || accountItem['plannable_type'] === 'planner_note') {
+						accountItem['account'] = account['canvas_url'];
+						accountItem['course_id'] = accountItem['course_id'] ?? accountItem['plannable']['course_id'] ?? -1;
+						accountItem['plannable']['due_at'] = accountItem['plannable']['due_at'] || accountItem['plannable']['todo_date'];
+						assignments.push(accountItem);
+					}
+				});
 			}
 			resolve(assignments);
         });
@@ -103,10 +113,11 @@ function List() {
         .then(async validAccounts => {
 			const filter = await getFilter();
 			const courses = await fetchCourses(validAccounts);
-            const assignmentsCopy = await fetchAssignments(validAccounts);
+            const assignments = await fetchItems(validAccounts);
 			setAccounts(validAccounts);
 			setFilter(filter);
 			setClasses(courses);
+			setItems(assignments);
 			setLoading(false);
         });
 	}, []);
@@ -115,19 +126,16 @@ function List() {
   	  	<div className="List">
 			<div className="list-container">
 				<Clock />
-				<div className="content-container">
-					{loading ?
-						<Loading size={100}/> :
-						<>
-							<Filter accounts={accounts} classes={classes} filter={filter} setFilter={handleFilter}/>
-							<div className="items">
-							</div>
-							<div className="add-new">
-								Add item
-								<img src={add} className="add" alt="add"></img>
-							</div>
-						</>
+				<Filter accounts={accounts} classes={classes} loading={loading} filter={filter} setFilter={handleFilter}/>
+				<div className="items-wrapper">
+					{loading ? 
+						<Loading size={100} /> :
+						<Items classes={classes.flat()} items={items} filter={filter}/>
 					}
+				</div>
+				<div className="add-new">
+					Add item
+					<img src={add} className="add" alt="add"></img>
 				</div>
 			</div>
   	  	  	<Navigation currentPage="list"/>

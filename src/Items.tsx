@@ -47,6 +47,21 @@ function Items({ classes, items, filter }: { classes: { [key: string]: any }[], 
         }
     }
 
+    const getDate = (item: { [key: string]: any }, type: string) => {
+        const date = new Date(item['plannable']['due_at']);
+        switch (type) {
+            case 'month': {
+                return ("0" + date.getMonth()).slice(-2);
+            }
+            case 'day': {
+                return ("0" + date.getDate()).slice(-2);
+            }
+            case 'time': {
+                return date.toLocaleString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+            }
+        }
+    }
+
     useEffect(() => {
         items.sort((a, b) => {
             if (a['plannable']['due_at'] === null) {
@@ -76,12 +91,16 @@ function Items({ classes, items, filter }: { classes: { [key: string]: any }[], 
                         <div className="color-line" style={{backgroundColor: getColor(item['course_id'])}}></div>
                         {getImage(item['plannable_type'])}
                         <div className="item-content">
-                            {getCourse(item)}
-                            <br></br>
-                            {item['plannable']['title']}
-                            <br></br>
-                            {item['plannable']['due_at']}
-                            <br></br>
+                            <div className="course">{getCourse(item)}</div>
+                            <div className="assignment-title">{item['plannable']['title']}</div>
+                        </div>
+                        <div className="due-date" style={{color: getColor(item['course_id'])}}>
+                            <div className="date">
+                                <div className="due-month">{getDate(item, 'month')}</div>
+                                <div className="slash" style={{backgroundColor: getColor(item['course_id'])}}></div>
+                                <div className="due-day">{getDate(item, 'day')}</div>
+                            </div>
+                            <div className="due-time">{getDate(item, 'time')}</div>
                         </div>
                     </div>
                 )

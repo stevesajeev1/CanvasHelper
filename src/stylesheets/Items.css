@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight&family=Martian+Mono&display=swap');
+
 .items {
     display: flex;
     flex-direction: column;
@@ -11,8 +13,8 @@
     align-items: center;
     width: 100%;
     min-height: 70px;
-    padding-top: 6px;
     background-color: var(--bg-lighter);
+    font-family: 'Inter Tight', sans-serif;
     color: var(--white);
 }
 
@@ -22,7 +24,7 @@
 
 .item > img {
     margin-left: 20px;
-    margin-right: 20px;
+    margin-right: 10px;
 }
 
 .item:hover > img {
@@ -30,7 +32,7 @@
 }
 
 .item-content {
-    width: 100%;
+    flex: 1;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -57,4 +59,44 @@
     width: 10px;
     height: 100%;
     z-index: 1;
+}
+
+.due-date {
+    height: 64px;
+    width: 64px;
+    margin-left: 10px;
+    font-family: 'Martian Mono', monospace;
+}
+
+.date {
+    position: relative;
+    font-size: 20px;
+    width: 100%;
+    height: 80%;
+}
+
+.due-month {
+    position: absolute;
+    top: 1px;
+    left: 3px;
+}
+
+.slash {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 60px;
+    width: 2.5px;
+    transform: translate(-50%, -50%) rotate(atan(100 / 80));
+}
+
+.due-day {
+    position: absolute;
+    bottom: 1px;
+    right: 3px;
+}
+  
+.due-time {
+    text-align: center;
+    font-size: 10px;
 }

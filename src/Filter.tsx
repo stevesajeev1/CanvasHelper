@@ -20,6 +20,8 @@ function Filter({ accounts, classes, loading, filter, setFilter }: { accounts: {
                     if (id) {
                         newFilter.push(id);
                     }
+                } else if (child.className === "filter-personal" && !(child.firstElementChild as HTMLInputElement).checked) {
+                    newFilter.push('-1');
                 }
             });
             setFilter(newFilter);
@@ -112,18 +114,21 @@ function Filter({ accounts, classes, loading, filter, setFilter }: { accounts: {
                 <div className="options" ref={options}>
                     {loading ? 
                     <Loading size={30}/> :
-                    classes.map((account, accountIndex) => {
-                        return (
-                            <React.Fragment key={accountIndex}>
-                                <label><input type="checkbox" onChange={handleCheck}/>{accounts[accountIndex]['canvas_url']}</label>
-                                {account.map((course) => {
-                                    return (
-                                        <label className="course" key={course['id']} data-id={course['id']}><input type="checkbox" onChange={handleCheck}/>{course['shortName']}</label>
-                                    );
-                                })}
-                            </React.Fragment>
-                        );
-                    })}
+                    <>
+                        {classes.map((account, accountIndex) => {
+                            return (
+                                <React.Fragment key={accountIndex}>
+                                    <label><input type="checkbox" onChange={handleCheck}/>{accounts[accountIndex]['canvas_url']}</label>
+                                    {account.map((course) => {
+                                        return (
+                                            <label className="course" key={course['id']} data-id={course['id']}><input type="checkbox" onChange={handleCheck}/>{course['shortName']}</label>
+                                        );
+                                    })}
+                                </React.Fragment>
+                            );
+                        })}
+                        <label className="filter-personal"><input type="checkbox" onChange={handleCheck}/>{'Personal'}</label>
+                    </>}
                 </div>
             </div>}
         </div>

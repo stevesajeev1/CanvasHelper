@@ -13,13 +13,8 @@
     align-items: center;
     width: 100%;
     min-height: 70px;
-    background-color: var(--bg-lighter);
     font-family: 'Inter Tight', sans-serif;
     color: var(--white);
-}
-
-.item:hover {
-    color: white;
 }
 
 .item > img {
@@ -27,17 +22,122 @@
     margin-right: 10px;
 }
 
-.item:hover > img {
+.item:not(.complete) {
+    background-color: var(--bg-lighter) !important;
+}
+
+.item.complete {
+    min-height: 34px;
+    justify-content: center;
+}
+
+.item.complete:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.complete-course {
+    font-size: 14px;
+    color: white;
+}
+
+.item.complete > img {
+    height: 20px;
+    width: 20px;
+    margin: 0;
     filter: brightness(0) invert(1);
 }
 
 .item-content {
-    flex: 1;
+    position: relative;
+    min-width: 0;
+    width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+}
+
+.item-content.personal:before {
+    content: 'PERSONAL';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    font-weight: bold;
+    font-size: 12px;
+    color: white;
+}
+
+.assignment-course {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 100%;
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+.assignment-title {
+    display: flex;
+    max-width: 95%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+    font-size: 14px;
+}
+
+.item-content:not(.personal) > .assignment-title:hover > a {
+    text-decoration: underline;
+    cursor: pointer;
+    color: white;
+}
+
+.assignment-title:hover > img {
+    filter: brightness(0) invert(1);
+}
+
+.assignment-title > a {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 13px);
+    text-decoration: none;
+    color: var(--white);
+}
+
+.assignment-title > img {
+    align-self: end;
+    margin-left: 1px;
+    height: 12px;
+    width: 12px;
+}
+
+.assignment-options {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    gap: 3px;
+    padding-right: 3px;
+    padding-left: 4px;
+    padding-top: 3px;
+    padding-bottom: 2px;
+    align-items: center;
+    background-color: var(--blue-darker);
+}
+
+.assignment-options > input {
+    margin: 0;
+}
+
+.assignment-options > img {
+    height: 15px;
+    width: 15px;
+}
+
+.assignment-options > img:hover {
+    cursor: pointer;
 }
 
 .border-top {
@@ -64,8 +164,14 @@
 .due-date {
     height: 64px;
     width: 64px;
+    min-height: 64px;
+    min-width: 64px;
     margin-left: 10px;
     font-family: 'Martian Mono', monospace;
+}
+
+.no-date {
+    margin-top: 3.5px;
 }
 
 .date {

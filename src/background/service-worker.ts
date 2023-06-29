@@ -7,6 +7,14 @@ enum ResponseType {
     ERROR
 }
 
+// Enums for RequestMethod
+enum RequestMethod {
+    GET = "GET",
+    PUT = "PUT",
+    POST = "POST",
+    DELETE = "DELETE"
+}
+
 // If development, set global chrome variable for runtime
 if (process.env.NODE_ENV === "development") {
     (global as any).chrome = {
@@ -88,21 +96,40 @@ const paginate = async (response: Response, request: {[key: string]: any}) => {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     let url = '';
     let responseType: ResponseType;
+    let requestMethod: RequestMethod = RequestMethod.GET;
 
     switch (request.query) {
         case 'validate': {
             url = `https://${request.canvas_url}/api/v1/users/self?access_token=${request.access_token}`;
+            requestMethod = RequestMethod.GET;
             responseType = ResponseType.STATUS;
             break;
         }
         case 'todo': {
             url = `https://${request.canvas_url}/api/v1/planner/items?start_date=${encodeURIComponent(new Date().toISOString())}&access_token=${request.access_token}`;
+            requestMethod = RequestMethod.GET;
             responseType = ResponseType.JSON;
             break;
         }
         case 'classes': {
             url = `https://${request.canvas_url}/api/v1/dashboard/dashboard_cards?access_token=${request.access_token}`;
+            requestMethod = RequestMethod.GET;
             responseType = ResponseType.JSON;
+            break;
+        }
+        case 'create_override': {
+            url = `https://${request.canvas_url}/api/v1/planner/overrides?plannable_type=${request.plannable_type}&plannable_id=${request.plannable_id}&marked_complete=${request.marked_complete}&access_token=${request.access_token}`;
+            requestMethod = RequestMethod.POST;
+            break;
+        }
+        case 'update_override': {
+            url = `https://${request.canvas_url}/api/v1/planner/overrides/${request.plannable_id}?marked_complete=${request.marked_complete}&access_token=${request.access_token}`;
+            requestMethod = RequestMethod.PUT;
+            break;
+        }
+        case 'delete_personal': {
+            url = `https://${request.canvas_url}/api/v1/planner_notes/${request.plannable_id}?access_token=${request.access_token}`;
+            requestMethod = RequestMethod.DELETE;
             break;
         }
     }
@@ -112,8 +139,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         url = `https://corsproxy.io/?${encodeURIComponent(url)}`;
     }
 
-    fetch(url)
-    .then(async response => {
+    fetch(url, {
+        method: requestMethod
+    }).then(async response => {
         switch (responseType) {
             case ResponseType.STATUS: {
                 sendResponse(response.status);
@@ -123,6 +151,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 const output = await paginate(response, request);
                 sendResponse(output);
                 break;
+            }
+            default: {
+                sendResponse();
             }
         }
     })

@@ -69,7 +69,15 @@ function List() {
 				accountItems.forEach(accountItem => {
 					if (accountItem['submissions'] !== false || accountItem['plannable_type'] === 'planner_note') {
 						accountItem['account'] = account['canvas_url'];
+						accountItem['token'] = account['access_token'];
 						accountItem['course_id'] = accountItem['course_id'] ?? accountItem['plannable']['course_id'] ?? -1;
+						if (accountItem['planner_override']) {
+							accountItem['marked_complete'] = accountItem['planner_override']['marked_complete'];
+						} else if (accountItem['submissions'] !== false) {
+							accountItem['marked_complete'] = accountItem['submissions']['submitted'];
+						} else {
+							accountItem['marked_complete'] = false;
+						}
 						accountItem['plannable']['due_at'] = accountItem['plannable']['due_at'] || accountItem['plannable']['todo_date'];
 						assignments.push(accountItem);
 					}

@@ -24,8 +24,8 @@ function Navigation({ currentPage }: { currentPage: string }) {
         <div className="navPanel" ref={navPanel}>
 			<img src={settings} className="settings" onClick={showSettings} title="Settings" alt="settings" />
 			<img src={list} className="list" onClick={showList} title="List" alt="list" />
-			<img src={notification} className="notification" title="Notifications" alt="notification" />
 			<img src={announcement} className="announcement" title="Announcements" alt="announcement" />
+			<img src={notification} className="notification" title="Notifications" alt="notification" />
 		</div>
     );
 

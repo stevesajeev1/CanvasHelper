@@ -19,9 +19,15 @@
 .dropdown-header:hover {
     text-decoration: underline;
     cursor: pointer;
+    color: white;
+}
+
+.dropdown-header:hover > .dropdown-icon {
+    filter: brightness(0) invert(1);
 }
 
 .dropdown-icon {
+    position: relative;
     width: 27px;
     height: 27px;
 }
@@ -71,6 +77,11 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.options label:hover {
+    color: white;
+    cursor: pointer;
 }
 
 .options input {

@@ -47,7 +47,7 @@ if (process.env.NODE_ENV === "development") {
 	};
 }
 
-/*
+
 chrome.runtime.onStartup.addListener(() => {
     chrome.notifications.create({
         iconUrl: logo,
@@ -56,7 +56,9 @@ chrome.runtime.onStartup.addListener(() => {
         message: 'Notification Body'
     });
 });
-*/
+
+
+/* ------------------------- API STUFF ------------------------- */
 
 const parseLinkHeader = (linkHeader: string, access_token: string) => {
     const relPortions = linkHeader.split(",");
@@ -135,6 +137,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         case 'create_personal': {
             url = `https://${request.canvas_url}/api/v1/planner_notes?title=${request.title}&todo_date=${request.todo_date}${request.course_id ? `&course_id=${request.course_id}` : ''}&access_token=${request.access_token}`;
             requestMethod = RequestMethod.POST;
+            break;
+        }
+        case 'announcements': {
+            url = `https://${request.canvas_url}/api/v1/announcements?access_token=${request.access_token}`;
+            requestMethod = RequestMethod.GET;
+            responseType = ResponseType.JSON;
             break;
         }
     }

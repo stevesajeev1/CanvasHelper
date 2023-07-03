@@ -190,7 +190,6 @@ function List() {
 			setAccounts(validAccounts);
 			setFilter(filter);
 			setClasses(courses);
-			console.log(courses);
 			setItems(assignments);
 			setLoading(false);
         });
@@ -225,7 +224,6 @@ function List() {
 										courseInfo['id'] = course['id'];
 										courseInfo['account'] = course['account'];
 										courseInfo['token'] = course['token'];
-										courseInfo['context_name'] = course['shortName'];
 										return <option value={JSON.stringify(courseInfo)} key={index}>{course['shortName']}</option>
 									})}
 								</select>

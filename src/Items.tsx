@@ -109,7 +109,6 @@ function Items({ classes, items, filter }: { classes: { [key: string]: any }[], 
             const bDate = new Date(b['plannable']['due_at']);
             return aDate.getTime() - bDate.getTime();
         });
-        console.log(items);
         setSortedItems(items);
     }, [items]);
 

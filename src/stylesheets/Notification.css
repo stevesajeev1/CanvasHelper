@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Martian+Mono&family=Barlow+Semi+Condensed&display=swap');
+
+.Notification {
+    display: flex;
+	flex: 1;
+    text-align: center;
+    background-color: var(--bg);
+    font-family: "Roboto", sans-serif;
+    height: 100%;
+    color: white;
+}
+
+.notification-container {
+	display: flex;
+    flex-direction: column;
+	flex-grow: 1;
+	height: 100%;
+	min-width: 0;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    width: 30px;
+    height: 17px;
+    margin-left: 5px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 17px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 13px;
+    width: 13px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+    transform: translateX(13px);
+}
+
+.notification-settings {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 60px;
+    padding-top: 40px;
+    border-top: 3px solid var(--blue-darker);
+    font-family: 'Martian Mono', monospace;
+    font-size: 16px;
+    color: var(--white);
+}
+
+.description {
+    margin-top: 1px;
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    font-style: italic;
+}
+
+.minutesHeader {
+    display: flex;
+    justify-content: center;
+}
+
+#minutes {
+    font-family: "Martian Mono", monospace;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--white);
+    width: 70px;
+    height: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+  
+#minutes:hover {
+    cursor: text;
+}  

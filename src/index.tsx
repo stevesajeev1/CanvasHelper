@@ -2,6 +2,8 @@ import ReactDOM from 'react-dom/client';
 import './stylesheets/shared.css';
 import List from './List';
 import Settings from './Settings'
+import Notification from './Notification'
+import AI from './AI'
 
 // If development, set global chrome variable for storage
 if (process.env.NODE_ENV === "development") {
@@ -48,6 +50,18 @@ export const showSettings = () => {
   	root.render(
 		<Settings />
   	);
+}
+
+export const showNotifications = () => {
+	root.render(
+	  <Notification />
+	);
+}
+
+export const showAI = () => {
+	root.render(
+	  <Settings />
+	);
 }
 
 // Get existing accounts, if it exists

@@ -32,10 +32,6 @@
     animation: shake 0.8s ease both;
 }
 
-.announcement:hover {
-    animation: pop 0.3s ease-in-out;
-}
-
 .list:hover {
     animation: skew 0.4s ease-in;
 }
@@ -65,15 +61,6 @@
 
     40%, 60% {
         transform: translateX(2.5px);
-    }
-}
-
-@keyframes pop {
-    50% {
-        transform: scale(1.2);
-    }
-    100% {
-        transform: scale(1);
     }
 }
 

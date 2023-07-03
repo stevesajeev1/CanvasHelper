@@ -4,6 +4,7 @@ import settings from './assets/settings.svg';
 import list from './assets/list.svg';
 import notification from './assets/notification.svg'
 import announcement from './assets/announcement.svg';
+import ai from './assets/ai.svg';
 import './stylesheets/shared.css';
 import './stylesheets/Navigation.css';
 
@@ -26,6 +27,7 @@ function Navigation({ currentPage }: { currentPage: string }) {
 			<img src={list} className="list" onClick={showList} title="List" alt="list" />
 			<img src={announcement} className="announcement" title="Announcements" alt="announcement" />
 			<img src={notification} className="notification" title="Notifications" alt="notification" />
+			<img src={ai} className="ai" title="AI" alt="ai" />
 		</div>
     );
 

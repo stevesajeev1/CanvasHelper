@@ -87,9 +87,12 @@
     font-size: 14px;
 }
 
-.item-content:not(.personal) > .assignment-title:hover > a {
+.item-content:not(.personal) > .assignment-title:hover {
     text-decoration: underline;
     cursor: pointer;
+}
+
+.item-content:not(.personal) > .assignment-title:hover > a {
     color: white;
 }
 

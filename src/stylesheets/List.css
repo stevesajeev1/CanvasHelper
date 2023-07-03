@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight&display=swap');
+
 .List {
     position: relative;
     display: flex;
@@ -39,27 +41,119 @@
 }
 
 .add-new {
+    width: 100%;
+    height: 70px;
+    background-color: var(--bg-lighter);
+    border-top: 3px solid var(--blue-darker);
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 20px;
+    color: white;
+}
+
+.add-new-title {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     height: 70px;
-    background-color: var(--bg-lighter);
-    border-top: 3px solid var(--blue-darker);
-    font-size: 20px;
     color: var(--white);
 }
 
-.add-new > img {
+.add-new-title > img {
     width: 30px;
     height: 30px;
 }
 
-.add-new:hover {
+.add-new-title:hover {
     cursor: pointer;
     color: white;
 }
 
-.add-new:hover > img {
+.add-new-title:hover > img {
     filter: brightness(0) invert(1);
+}
+
+.add-new-input {
+    width: 100%;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    gap: 10px;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 16px;
+    background-color: var(--blue-darker);
+    overflow-y: auto;
+}
+
+.add-new-input::-webkit-scrollbar {
+    width: 10px;
+}
+
+.add-new-input::-webkit-scrollbar-thumb {
+    background: var(--blue-lighter);
+    border-radius: 10px;
+}
+
+.add-new-input input:focus {
+    outline: none;
+}
+
+.personal-input {
+    font-family: 'Inter Tight', sans-serif;
+    background: var(--blue-lighter);
+    border: none;
+    color: white;
+}
+
+.due-date-input {
+    font-family: 'Inter Tight', sans-serif;
+    padding: 3px;
+    border: none;
+    background-color: var(--blue-lighter);
+    color: white;
+}
+
+.due-date-input::-webkit-calendar-picker-indicator {
+    filter: brightness(0) invert(1);
+}
+
+.due-date-input:hover {
+    cursor: pointer;
+}
+
+.class-label {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.class-checkbox {
+    vertical-align: middle;
+}
+
+.class-input select {
+    font-family: 'Inter Tight', sans-serif;
+    background-color: var(--blue-lighter);
+    border: none;
+    color: white;
+}
+
+.class-input select:hover {
+    cursor: pointer;
+}
+
+.class-input select:focus {
+    outline: none;
+}
+
+.add-submit {
+    background-color: var(--blue-lighter);
+    padding: 10px;
+}
+
+.add-submit:hover {
+    cursor: pointer;
+    box-shadow: 0 0 100px 2px var(--bg-lighter);
 }

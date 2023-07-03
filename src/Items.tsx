@@ -42,7 +42,7 @@ function Items({ classes, items, filter }: { classes: { [key: string]: any }[], 
         const date = new Date(item['plannable']['due_at']);
         switch (type) {
             case 'month': {
-                return ("0" + date.getMonth()).slice(-2);
+                return ("0" + (date.getMonth() + 1)).slice(-2);
             }
             case 'day': {
                 return ("0" + date.getDate()).slice(-2);

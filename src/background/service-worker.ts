@@ -132,6 +132,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             requestMethod = RequestMethod.DELETE;
             break;
         }
+        case 'create_personal': {
+            url = `https://${request.canvas_url}/api/v1/planner_notes?title=${request.title}&todo_date=${request.todo_date}${request.course_id ? `&course_id=${request.course_id}` : ''}&access_token=${request.access_token}`;
+            requestMethod = RequestMethod.POST;
+            break;
+        }
     }
 
     // If development, use a CORS proxy

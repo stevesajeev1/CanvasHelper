@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Navigation from './Navigation'
 import Loading from './Loading'
 import Clock from './Clock'
@@ -25,7 +25,7 @@ function List() {
     const [loading, setLoading] = useState(true);
 
 	// State for accounts
-	const [accounts, setAccounts] = useState<{}[]>([]);
+	const [accounts, setAccounts] = useState<{ [key: string]: any }[]>([]);
 
 	// State for classes
 	const [classes, setClasses] = useState<{}[][]>([[]]);
@@ -35,6 +35,12 @@ function List() {
 
 	// State for filter
 	const [filter, setFilter] = useState<string[]>([]);
+
+	// State for adding item
+	const [adding, setAdding] = useState(false);
+
+	// State for class select
+	const [addingClass, setAddingClass] = useState(false);
 
 	// Check validity of accounts
     const checkAccountsValidity = () => {
@@ -91,7 +97,12 @@ function List() {
 		return new Promise<{}[][]>(async (resolve, reject) => {
 			const courses = [];
 			for (const account of accounts) {
-				courses.push(await chrome.runtime.sendMessage({query: "classes", canvas_url: account['canvas_url'], access_token: account['access_token']}));
+				const accountClasses: { [key: string]: any }[] = await chrome.runtime.sendMessage({query: "classes", canvas_url: account['canvas_url'], access_token: account['access_token']});
+				accountClasses.forEach(accountClass => {
+					accountClass['account'] = account['canvas_url'];
+					accountClass['token'] = account['access_token'];
+				})
+				courses.push(accountClasses);
 			}
 			resolve(courses);
 		});
@@ -115,6 +126,60 @@ function List() {
 		});
 	}
 
+	const addRef = useRef<HTMLDivElement>(null);
+
+	const handleAdd = () => {
+		if (!adding) {
+			setAdding(true);
+		}
+	}
+
+	const handleClickOutside = (event: MouseEvent) => {
+        if (addRef.current && !addRef.current.contains(event.target as Node)) {
+			setAdding(false);
+        }
+    }
+
+	const handleAddClass = () => {
+		setAddingClass(!addingClass);
+	}
+
+	const handleDateInputClick = (event: React.MouseEvent) => {
+		(event.target as HTMLInputElement).showPicker();
+	}
+
+	const handleAddSubmit = async (event: React.MouseEvent) => {
+		const classContainer = event.currentTarget.previousElementSibling;
+		const dueDateContainer = classContainer?.previousElementSibling;
+		const titleContainer = dueDateContainer?.previousElementSibling;
+
+		const titleInput = titleContainer?.firstElementChild as HTMLInputElement;
+		const dueDateInput = dueDateContainer?.firstElementChild as HTMLInputElement;
+		const classSelect = classContainer?.lastElementChild as HTMLSelectElement;
+
+		if (!titleInput.value) {
+			titleInput.setCustomValidity('Input a title!');
+			titleInput.reportValidity();
+			return;
+		}
+		if (!dueDateInput.value || new Date(dueDateInput.value) <= new Date()) {
+			dueDateInput.setCustomValidity('Input a date/time that is after the current time!');
+			dueDateInput.reportValidity();
+			return;
+		}
+
+		if (addingClass) {
+			const info = JSON.parse(classSelect.selectedOptions[0].value);
+			await chrome.runtime.sendMessage({query: "create_personal", canvas_url: info['account'], access_token: info['token'], title: titleInput.value, todo_date: `${new Date(dueDateInput.value).toISOString()}`, course_id: info['id']});
+		} else {
+			await chrome.runtime.sendMessage({query: "create_personal", canvas_url: accounts[0]['canvas_url'], access_token: accounts[0]['access_token'], title: titleInput.value, todo_date: `${new Date(dueDateInput.value).toISOString()}`});
+		}
+
+		const newItems = await fetchItems(accounts);
+		setAdding(false);
+		setItems(newItems);
+	}
+
 	useEffect(() => {
 		// Check account validity
         checkAccountsValidity()
@@ -125,9 +190,14 @@ function List() {
 			setAccounts(validAccounts);
 			setFilter(filter);
 			setClasses(courses);
+			console.log(courses);
 			setItems(assignments);
 			setLoading(false);
         });
+		document.addEventListener('click', handleClickOutside, true);
+		return () => {
+			document.removeEventListener('click', handleClickOutside, true);
+		};
 	}, []);
 
   	return (
@@ -141,9 +211,32 @@ function List() {
 						<Items classes={classes.flat()} items={items} filter={filter}/>
 					}
 				</div>
-				<div className="add-new">
-					Add item
-					<img src={add} className="add" alt="add"></img>
+				<div className="add-new" onClick={handleAdd} ref={addRef}>
+					{adding ? 
+					<div className="add-new-input">
+						<label className='personal-label'>Title: <input className='personal-input' type="text" maxLength={100}/></label>
+						<label className='due-date-label'>Due Date: <input className='due-date-input' type="datetime-local" onClick={handleDateInputClick}/></label>
+						<div className='class-input'>
+							<label className='class-label'>Class?<input className='class-checkbox' type="checkbox" onChange={handleAddClass} /></label>
+							{addingClass &&
+								<select>
+									{classes.flat().map((course: { [key: string]: any }, index) => {
+										const courseInfo: { [key: string]: any } = {};
+										courseInfo['id'] = course['id'];
+										courseInfo['account'] = course['account'];
+										courseInfo['token'] = course['token'];
+										courseInfo['context_name'] = course['shortName'];
+										return <option value={JSON.stringify(courseInfo)} key={index}>{course['shortName']}</option>
+									})}
+								</select>
+							}
+						</div>
+						<div className='add-submit' onClick={handleAddSubmit}>Submit</div>
+					</div> :
+					<div className="add-new-title">
+						Add item
+						<img src={add} className="add" alt="add"></img>
+					</div>}
 				</div>
 			</div>
   	  	  	<Navigation currentPage="list"/>

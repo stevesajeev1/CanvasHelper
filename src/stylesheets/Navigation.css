@@ -36,16 +36,6 @@
     animation: skew 0.4s ease-in;
 }
 
-.ai {
-    height: 25px !important;
-    width: 25px !important;
-    margin-top: 5px;
-}
-
-.ai:hover {
-    animation: rotate-infinite 2s ease-in-out infinite;
-}
-
 @keyframes shake {
     10%, 90% {
         transform: translateX(-1px);
@@ -67,14 +57,5 @@
 @keyframes skew {
     50% {
         transform: skewX(20deg);
-    }
-}
-
-@keyframes rotate-infinite {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
     }
 }

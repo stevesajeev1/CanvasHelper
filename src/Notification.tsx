@@ -6,43 +6,52 @@ import './stylesheets/Notification.css';
 const Notification = () => {
     const minutesRef = useRef<HTMLDivElement>(null);
     const startupRef = useRef<HTMLInputElement>(null);
-    const updateRef = useRef<HTMLInputElement>(null);
+
+    let minutesDiv: HTMLDivElement | null; 
+    let startupInput: HTMLInputElement | null;
 
     useEffect(() => {
-        let minutesDiv = minutesRef.current; 
-        let startupInput = startupRef.current;
-        let updateInput = updateRef.current;
-        
+        minutesDiv = minutesRef.current; 
+        startupInput = startupRef.current;
+    
         chrome.storage.sync.get(['notifications'], items => {
             if (items['notifications']) {
                 if (startupRef.current) {
                     startupRef.current.checked = items['notifications']['startup'];
                 }
-                if (updateRef.current) {
-                    updateRef.current.checked = items['notifications']['update'];
-                }
                 if (minutesRef.current) {
-                    minutesRef.current.textContent = items['notifications']['minutes'];
+                    minutesRef.current.textContent = items['notifications']['minutes'] === false ? 'Off' : items['notifications']['minutes'];
                 }
             }
         });
-
-        return () => {
-            chrome.storage.sync.set({'notifications': {
-                'startup': (startupInput?.checked ? true : false),
-                'update': (updateInput?.checked ? true : false),
-                'minutes': (minutesDiv?.textContent ? parseInt(minutesDiv.textContent): 0)
-            }});
-        }
     }, []);
+
+    const handleCheck = () => {
+        chrome.storage.sync.set({'notifications': {
+            'startup': (startupInput?.checked ? true : false),
+            'minutes': (minutesDiv?.textContent ? parseInt(minutesDiv.textContent): 0)
+        }});
+    }
 
     const scrollMinutes = (event: React.WheelEvent) => {
         let minutes = event.currentTarget.textContent;
         if (minutes) {
+            if (minutes === "Off") {
+                minutes = "-10";
+            }
             const newMinutes = parseInt(minutes) - 10 * Math.sign(event.deltaY);
-            if (newMinutes < 0 || newMinutes > 1440) return;
-            event.currentTarget.textContent = newMinutes.toString();
+            if (newMinutes < 0 || newMinutes > 1440) {
+                event.currentTarget.textContent = "Off";
+            } else {
+                event.currentTarget.textContent = newMinutes.toString();
+            }
         }
+        chrome.storage.sync.set({'notifications': {
+            'startup': (startupInput?.checked ? true : false),
+            'minutes': (minutesDiv?.textContent ? (minutesDiv.textContent === 'Off' ? false : parseInt(minutesDiv.textContent)) : 0)
+        }}, () => {
+            chrome.runtime.sendMessage({query: "notificationUpdate"});
+        });
     }
 
     return (
@@ -53,18 +62,10 @@ const Notification = () => {
                     <div>
                         Notification on Startup:
                         <label className="switch">
-                            <input type="checkbox" ref={startupRef}></input>
+                            <input type="checkbox" onChange={handleCheck} ref={startupRef}></input>
                             <span className="slider round"></span>
                         </label>
                         <div className="description">Notifies you of assignments due today when the browser is opened</div>
-                    </div>
-                    <div>
-                        Notification on Update:
-                        <label className="switch">
-                            <input type="checkbox" ref={updateRef}></input>
-                            <span className="slider round"></span>
-                        </label>
-                        <div className="description">Notifies you when a new assignment or announcement is created</div>
                     </div>
                     <div>
                         <div className="minutesHeader">
@@ -75,6 +76,7 @@ const Notification = () => {
                         <div className="description">Amount of time before a due date that triggers a notification</div>
                     </div>
                 </div>
+                <div className="disclaimer">*Note: Notifications only work if browser is open!*</div>
             </div>
             <Navigation currentPage='notification' />
         </div>

@@ -15,12 +15,14 @@
   },
   "permissions": [
     "storage",
-    "notifications"
+    "notifications",
+    "offscreen"
   ],
   "host_permissions": [
     "<all_urls>"
   ],
   "background": {
     "service_worker": "static/js/background/service-worker.js"
-  }
+  },
+  "author": "stevesajeev123@gmail.com"
 }

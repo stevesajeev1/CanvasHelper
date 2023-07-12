@@ -7,4 +7,9 @@ I implemented notifications that keep you informed about upcoming deadlines. Whe
 
 The extension also works with multiple Canvas accounts, allowing all assignments to be found in one place.
 
+In order to load the extension, 
+1. Extract `canvashelper.zip`
+2. Open the Chrome extension page and turn on "Developer mode"
+3. Load Unpacked
+
 Built with React.js and TypeScript.
